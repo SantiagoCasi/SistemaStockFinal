@@ -1,0 +1,63 @@
+﻿@model IEnumerable<SistemaStock.Models.ViewModels.StockProductoViewModel>
+@{
+    ViewData["Title"] = "Stock";
+    ViewData["SubTitle"] = "Stock de Productos";
+}
+
+<form method="get" class="card p-4 mt-3 mb-3">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <select name="idProducto" class="form-select" asp-items="ViewBag.Productos">
+                <option value="">Todos los Productos</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="idDeposito" class="form-select" asp-items="ViewBag.Depositos">
+                <option value="">Todos los Depósitos</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="idCategoria" class="form-select" asp-items="ViewBag.Categorias">
+                <option value="">Todas las categorías</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-secondary w-100">Buscar</button>
+        </div>
+    </div>
+</form>
+@foreach (var producto in Model)
+{
+    <div class="card p-4 mt-3">
+        <h4>@producto.Nombre</h4>
+        <p>
+            Categoría: @producto.CategoriaNombre - Stock total: <strong>@producto.StockTotal</strong>
+        </p>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Depósito</th>
+                        <th>Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stock in producto.Depositos)
+                    {
+                        if (stock.Cantidad != 0)
+                        {
+                            <tr>
+                                <td>@stock.DepositoNombre</td>
+                                <td>@stock.Cantidad</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+@if (!Model.Any())
+{
+    <p class="text-muted">No hay productos.</p>
+}

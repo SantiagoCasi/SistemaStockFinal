@@ -1,0 +1,101 @@
+﻿@model List<SistemaStock.Models.ViewModels.Movimiento.MovimientoViewModel>
+@using SistemaStock.Models.Enum
+@{
+    ViewData["Title"] = "Movimientos";
+    ViewData["SubTitle"] = "Listado de Movimientos";
+}
+@if (TempData["Ok"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["Ok"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<form method="get" class="card p-4 mt-3 mb-3">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <select name="idProducto" class="form-select" asp-items="ViewBag.Productos">
+                <option value="">Todos los Productos</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="tipo" class="form-select" asp-items="Html.GetEnumSelectList<TipoMovimiento>()">
+                <option value="">Todos los Movimientos</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-secondary w-100">Buscar</button>
+        </div>
+    </div>
+</form>
+<div class="d-flex justify-content-end align-items-center mb-3">
+    <div class="btn-group">
+        <a asp-action="Entrada" class="btn btn-sm btn-outline-success">
+            <i class="bi bi-box-arrow-in-down"></i> Nueva Entrada
+        </a>
+        <a asp-action="Salida" class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-box-arrow-up"></i> Nueva Salida
+        </a>
+        <a asp-action="Transferencia" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-arrow-left-right"></i> Nueva Transferencia
+        </a>
+    </div>
+</div>
+@if (Model.Count == 200)
+{
+    <div class="alert alert-info">
+        Mostrando los últimos 200 Movimientos. Usa los filtros para acortar la búsqueda.
+    </div>
+}
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>Producto</th>
+                <th>Depósito origen</th>
+                <th>Depósito destino</th>
+                <th class="text-end">Cantidad</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        @{
+                            var (badgeClass, texto) = item.Tipo switch
+                            {
+                                TipoMovimiento.TransferenciaSalida => ("bg-warning text-dark", "Transf. salida"),
+                                TipoMovimiento.TransferenciaEntrada => ("bg-success", "Transf. entrada"),
+                                TipoMovimiento.Entrada => ("bg-primary", "Ingreso"),
+                                TipoMovimiento.Salida => ("bg-danger", "Egreso"),
+                                _ => ("bg-secondary", item.Tipo.ToString())
+                            };
+                        }
+                        <span class="badge @badgeClass">@texto</span>
+                    </td>
+                    <td>@item.ProductoNombre</td>
+                    <td>@(item.DepositoOrigenNombre ?? "-")</td>
+                    <td>@(item.DepositoDestinoNombre ?? "-")</td>
+                    <td class="text-end">@item.Cantidad</td>
+                    <td>@item.Observaciones</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+@if (!Model.Any())
+{
+    <p class="text-muted">No hay movimientos.</p>
+}
