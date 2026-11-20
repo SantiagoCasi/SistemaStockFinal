@@ -41,14 +41,21 @@ namespace SistemaStock.Controllers
                     model.Email,
                     model.Password,
                     model.RecordarSesion,
-                    lockoutOnFailure: false);
+                    lockoutOnFailure: true);
 
                 if (result.Succeeded)
                 {
+                    var usuario = await _userManager.FindByEmailAsync(model.Email);
+                    if (usuario != null && !usuario.Activo)
+                    {
+                        await _signInManager.SignOutAsync();
+                        ModelState.AddModelError("", "El usuario está inactivo. Consulte con un administrador.");
+                        return View(model);
+                    }
                     return LocalRedirect(returnUrl);
                 }
                 if (result.IsLockedOut)
-                    ModelState.AddModelError("", "Cuenta bloqueada. Intente en 10 minutos.");
+                    ModelState.AddModelError("", "Cuenta bloqueada. Intente en 5 minutos.");
                 else
                     ModelState.AddModelError("", "Email o contraseña incorrectos.");
             }

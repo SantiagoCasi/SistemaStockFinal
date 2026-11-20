@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuestPDF.Fluent;
@@ -10,6 +11,7 @@ using SistemaStock.Models.Enum;
 
 namespace SistemaStock.Controllers
 {
+    [Authorize(Roles = "Administrador,Encargado,Consulta")]
     public class ReporteController : Controller
     {
         private readonly AppDbContext _context;

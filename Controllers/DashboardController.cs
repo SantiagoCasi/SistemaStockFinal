@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SistemaStock.Data;
 using SistemaStock.Models.Enum;
@@ -6,6 +7,7 @@ using SistemaStock.Models.ViewModels;
 
 namespace SistemaStock.Controllers
 {
+    [Authorize]
     public class DashboardController : Controller
     {
         private readonly AppDbContext _context;

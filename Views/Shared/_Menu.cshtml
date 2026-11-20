@@ -98,45 +98,51 @@
                     </a>
                 </li>
 
-                <li class="nav-header">MAESTROS</li>
+                @if (User.IsInRole("Administrador") || User.IsInRole("Encargado"))
+                {
+                    <li class="nav-header">MAESTROS</li>
 
-                <!-- Depósitos -->
-                <li class="nav-item">
-                    <a asp-controller="Depositos" asp-action="Index"
-                       class="nav-link @(controller == "Depositos" ? "active" : "")">
-                        <i class="nav-icon bi bi-building"></i>
-                        <p>Depósitos</p>
-                    </a>
-                </li>
+                    <!-- Depósitos -->
+                    <li class="nav-item">
+                        <a asp-controller="Depositos" asp-action="Index"
+                           class="nav-link @(controller == "Depositos" ? "active" : "")">
+                            <i class="nav-icon bi bi-building"></i>
+                            <p>Depósitos</p>
+                        </a>
+                    </li>
 
-                <!-- Clientes -->
-                <li class="nav-item">
-                    <a asp-controller="Clientes" asp-action="Index"
-                       class="nav-link @(controller == "Clientes" ? "active" : "")">
-                        <i class="nav-icon bi bi-people"></i>
-                        <p>Clientes</p>
-                    </a>
-                </li>
+                    <!-- Clientes -->
+                    <li class="nav-item">
+                        <a asp-controller="Clientes" asp-action="Index"
+                           class="nav-link @(controller == "Clientes" ? "active" : "")">
+                            <i class="nav-icon bi bi-people"></i>
+                            <p>Clientes</p>
+                        </a>
+                    </li>
 
-                <!-- Proveedores -->
-                <li class="nav-item">
-                    <a asp-controller="Proveedores" asp-action="Index"
-                       class="nav-link @(controller == "Proveedores" ? "active" : "")">
-                        <i class="nav-icon bi bi-shop"></i>
-                        <p>Proveedores</p>
-                    </a>
-                </li>
+                    <!-- Proveedores -->
+                    <li class="nav-item">
+                        <a asp-controller="Proveedores" asp-action="Index"
+                           class="nav-link @(controller == "Proveedores" ? "active" : "")">
+                            <i class="nav-icon bi bi-shop"></i>
+                            <p>Proveedores</p>
+                        </a>
+                    </li>
+                }
 
-                <li class="nav-header">ANÁLISIS</li>
+                @if (User.IsInRole("Administrador") || User.IsInRole("Encargado") || User.IsInRole("Consulta"))
+                {
+                    <li class="nav-header">ANÁLISIS</li>
 
-                <!-- Reportes -->
-                <li class="nav-item">
-                    <a asp-controller="Reporte" asp-action="Index"
-                       class="nav-link @(controller == "Reporte" ? "active" : "")">
-                        <i class="nav-icon bi bi-bar-chart-line"></i>
-                        <p>Reportes</p>
-                    </a>
-                </li>
+                    <!-- Reportes -->
+                    <li class="nav-item">
+                        <a asp-controller="Reporte" asp-action="Index"
+                           class="nav-link @(controller == "Reporte" ? "active" : "")">
+                            <i class="nav-icon bi bi-bar-chart-line"></i>
+                            <p>Reportes</p>
+                        </a>
+                    </li>
+                }
 
                 @if (User.IsInRole("Administrador"))
                 {

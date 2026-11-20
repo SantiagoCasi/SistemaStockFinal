@@ -174,22 +174,43 @@ namespace SistemaStock.Controllers
                 }
 
                 //4. Actualizar el rol del usuario
-                var rolActual = await _userManager.GetRolesAsync(user);
-
-                var removeResult = await _userManager.RemoveFromRolesAsync(user, rolActual);
-                if (!removeResult.Succeeded)
+                if (!await _roleManager.RoleExistsAsync(model.Rol))
                 {
-                    ModelState.AddModelError("", "Error al remover el rol anterior.");
+                    ModelState.AddModelError("", "El rol seleccionado no existe.");
                     ViewBag.Roles = await CargarRoles(model.Rol);
                     return View(model);
                 }
 
-                var addResult = await _userManager.AddToRoleAsync(user, model.Rol);
-                if (!addResult.Succeeded)
+                if (user.Id == _userManager.GetUserId(User) && model.Rol != "Administrador")
                 {
-                    ModelState.AddModelError("", "Error al asignar el nuevo rol.");
+                    ModelState.AddModelError("", "No puedes quitarte tu propio rol de Administrador.");
                     ViewBag.Roles = await CargarRoles(model.Rol);
                     return View(model);
+                }
+
+                var rolActual = await _userManager.GetRolesAsync(user);
+
+                if (!rolActual.Contains(model.Rol))
+                {
+                    var addResult = await _userManager.AddToRoleAsync(user, model.Rol);
+                    if (!addResult.Succeeded)
+                    {
+                        ModelState.AddModelError("", "Error al asignar el nuevo rol.");
+                        ViewBag.Roles = await CargarRoles(model.Rol);
+                        return View(model);
+                    }
+                }
+
+                var rolesAQuitar = rolActual.Where(r => r != model.Rol).ToList();
+                if (rolesAQuitar.Any())
+                {
+                    var removeResult = await _userManager.RemoveFromRolesAsync(user, rolesAQuitar);
+                    if (!removeResult.Succeeded)
+                    {
+                        ModelState.AddModelError("", "Error al remover el rol anterior.");
+                        ViewBag.Roles = await CargarRoles(model.Rol);
+                        return View(model);
+                    }
                 }
 
                 TempData["Ok"] = "Usuario actualizado.";
