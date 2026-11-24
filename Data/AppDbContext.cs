@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SistemaStock.Models.Entities;
-using System.Reflection.Emit;
 
 namespace SistemaStock.Data
 {
