@@ -9,6 +9,7 @@ namespace SistemaStock.Models.ViewModels
         public int id { get; set; }
 
 
+        [Required(ErrorMessage = "El código es obligatorio")]
         [StringLength(50, ErrorMessage = "Máximo 50 caracteres")]
         [Display(Name = "Código")]
         public string? Codigo { get; set; }
@@ -57,7 +58,7 @@ namespace SistemaStock.Models.ViewModels
         public bool Activo { get; set; } = true;
 
         [Display(Name = "Fecha de Creación")]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [Display(Name = "Fecha de Actualización")]
         public DateTime? UpdatedAt { get; set; }

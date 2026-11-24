@@ -17,7 +17,7 @@ namespace SistemaStock.Models.ViewModels.Movimiento
 
         [Required(ErrorMessage = "La cantidad es obligatoria.")]
         [Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser mayor a cero.")]
-        public int Cantidad { get; set; }
+        public int? Cantidad { get; set; }
 
         [Display(Name = "Cliente")]
         [Required(ErrorMessage = "Debe seleccionar un cliente.")]

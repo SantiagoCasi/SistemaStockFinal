@@ -15,5 +15,11 @@ namespace SistemaStock.Models.ViewModels
         public string? Ubicacion { get; set; }
 
         public bool Activo { get; set; } = true;
+
+        [Display(Name = "Fecha de Creación")]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        [Display(Name = "Fecha de Actualización")]
+        public DateTime? UpdatedAt { get; set; }
     }
 }

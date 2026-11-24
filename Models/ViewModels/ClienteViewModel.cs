@@ -17,11 +17,11 @@ namespace SistemaStock.Models.ViewModels
         [StringLength(30, ErrorMessage = "Máximo 30 caracteres")]
         public string? Documento { get; set; }
 
-        [EmailAddress, StringLength(100, ErrorMessage = "Máximo 100 caracteres")]
+        [EmailAddress(ErrorMessage = "El email no es válido"), StringLength(100, ErrorMessage = "Máximo 100 caracteres")]
         public string? Email { get; set; }
 
         [Display(Name = "Teléfono")]
-        [Phone, StringLength(30, ErrorMessage = "Máximo 30 caracteres")]
+        [Phone(ErrorMessage = "El teléfono no es válido"), StringLength(30, ErrorMessage = "Máximo 30 caracteres")]
         public string? Telefono { get; set; }
 
         [StringLength(200, ErrorMessage = "Máximo 200 caracteres")]
@@ -35,7 +35,7 @@ namespace SistemaStock.Models.ViewModels
         public bool Activo { get; set; } = true;
 
         [Display(Name = "Fecha de Creación")]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [Display(Name = "Fecha de Actualización")]
         public DateTime? UpdatedAt { get; set; }

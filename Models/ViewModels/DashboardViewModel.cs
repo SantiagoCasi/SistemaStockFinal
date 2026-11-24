@@ -8,7 +8,6 @@
         public int TotalProveedoresActivos { get; set; }
         public int TotalClientesActivos { get; set; }
         public int TotalDepositosActivos { get; set; }
-        public int AlertasBajoStock { get; set; }
         public int MovimientosHoy { get; set; }
         public decimal ValorVentasHoy { get; set; }
 
