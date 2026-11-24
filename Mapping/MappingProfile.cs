@@ -1,7 +1,6 @@
 ﻿using SistemaStock.Models.Entities;
 using SistemaStock.Models.ViewModels.Movimiento;
 using AutoMapper;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SistemaStock.Mappings
 {
