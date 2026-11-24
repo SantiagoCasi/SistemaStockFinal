@@ -22,6 +22,7 @@ ${mensaje}
 
 $(document).ready(function() {
   $('#miTabla').DataTable({
+      order: [],
       language: {
           url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
       }
@@ -35,7 +36,7 @@ $(document).ready(function() {
                 const nombre = this.dataset.nombre;
 
                 Swal.fire({
-                    title: '¿Eliminar producto?',
+                    title: '¿Eliminar registro?',
                     text: `Se eliminará "${nombre}". Esta acción no se puede deshacer.`,
                     icon: 'warning',
                     showCancelButton: true,
