@@ -1,4 +1,4 @@
-﻿@model SistemaStock.Models.Entities.Deposito
+﻿@model SistemaStock.Models.ViewModels.DepositoViewModel
 
 @{
     ViewData["Title"] = "Depósitos";
@@ -20,16 +20,6 @@
                 <label asp-for="Ubicacion" class="form-label"></label>
                 <input asp-for="Ubicacion" class="form-control" />
                 <span asp-validation-for="Ubicacion" class="text-danger"></span>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label asp-for="CreatedAt" class="form-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label asp-for="UpdatedAt" class="form-label"></label>
-                <input asp-for="UpdatedAt" class="form-control" />
-                <span asp-validation-for="UpdatedAt" class="text-danger"></span>
             </div>
             <div class="col-md-6 mb-3 d-flex align-items-end">
                 <div class="form-check form-switch">
