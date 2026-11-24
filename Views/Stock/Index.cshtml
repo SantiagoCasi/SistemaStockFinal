@@ -26,38 +26,33 @@
         </div>
     </div>
 </form>
-@foreach (var producto in Model)
-{
-    <div class="card p-4 mt-3">
-        <h4>@producto.Nombre</h4>
-        <p>
-            Categoría: @producto.CategoriaNombre - Stock total: <strong>@producto.StockTotal</strong>
-        </p>
-        <div class="table-responsive">
-            <table class="table table-striped align-middle mb-0">
-                <thead>
+<div class="card p-4 mt-3">
+    <div class="table-responsive">
+        <table class="table table-striped align-middle" id="miTabla">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Stock por depósito</th>
+                    <th class="text-end">Stock total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var producto in Model)
+                {
                     <tr>
-                        <th>Depósito</th>
-                        <th>Stock</th>
+                        <td>@producto.Nombre</td>
+                        <td>@producto.CategoriaNombre</td>
+                        <td>
+                            @foreach (var stock in producto.Depositos.Where(s => s.Cantidad != 0))
+                            {
+                                <div>@stock.DepositoNombre: <strong>@stock.Cantidad</strong></div>
+                            }
+                        </td>
+                        <td class="text-end fw-bold">@producto.StockTotal</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var stock in producto.Depositos)
-                    {
-                        if (stock.Cantidad != 0)
-                        {
-                            <tr>
-                                <td>@stock.DepositoNombre</td>
-                                <td>@stock.Cantidad</td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
+                }
+            </tbody>
+        </table>
     </div>
-}
-@if (!Model.Any())
-{
-    <p class="text-muted">No hay productos.</p>
-}
+</div>
