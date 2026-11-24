@@ -55,7 +55,7 @@
     </div>
 }
 <div class="table-responsive">
-    <table class="table table-striped align-middle">
+    <table class="table table-striped align-middle" id="miTabla">
         <thead>
             <tr>
                 <th>Fecha</th>
@@ -78,8 +78,8 @@
                             {
                                 TipoMovimiento.TransferenciaSalida => ("bg-warning text-dark", "Transf. salida"),
                                 TipoMovimiento.TransferenciaEntrada => ("bg-success", "Transf. entrada"),
-                                TipoMovimiento.Entrada => ("bg-primary", "Ingreso"),
-                                TipoMovimiento.Salida => ("bg-danger", "Egreso"),
+                                TipoMovimiento.Entrada => ("bg-primary", "Entrada"),
+                                TipoMovimiento.Salida => ("bg-danger", "Salida"),
                                 _ => ("bg-secondary", item.Tipo.ToString())
                             };
                         }

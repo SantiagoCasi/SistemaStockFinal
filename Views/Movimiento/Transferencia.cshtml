@@ -73,7 +73,7 @@
 
     <script>
         // Evitar seleccionar el mismo depósito en origen y destino
-        document.querySelector('form').addEventListener('submit', function (e) {
+        document.querySelector('main form').addEventListener('submit', function (e) {
             const origen = document.getElementById('idDepositoOrigen').value;
             const destino = document.getElementById('idDepositoDestino').value;
             if (origen && destino && origen === destino) {
