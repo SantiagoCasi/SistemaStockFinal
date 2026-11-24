@@ -7,7 +7,7 @@ using SistemaStock.Models.ViewModels;
 
 namespace SistemaStock.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrador,Encargado")]
     public class DashboardController : Controller
     {
         private readonly AppDbContext _context;

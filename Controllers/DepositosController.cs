@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaStock.Data;
 using SistemaStock.Models.Entities;
+using SistemaStock.Models.ViewModels;
 
 namespace SistemaStock.Controllers
 {
@@ -21,139 +17,139 @@ namespace SistemaStock.Controllers
             _context = context;
         }
 
-        // GET: Depositos
+        #region Index
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Depositos.ToListAsync());
+            var depositos = await _context.Depositos.ToListAsync();
+            return View(depositos.Select(AViewModel).ToList());
         }
+        #endregion
 
-        // GET: Depositos/Details/5
+        #region Details
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var deposito = await _context.Depositos
-                .FirstOrDefaultAsync(m => m.id == id);
-            if (deposito == null)
-            {
-                return NotFound();
-            }
-
-            return View(deposito);
+            if (id == null) return NotFound();
+            var deposito = await _context.Depositos.FirstOrDefaultAsync(d => d.id == id);
+            if (deposito == null) return NotFound();
+            return View(AViewModel(deposito));
         }
+        #endregion
 
-        // GET: Depositos/Create
+        #region Create
         public IActionResult Create()
         {
-            return View();
+            return View(new DepositoViewModel());
         }
 
-        // POST: Depositos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nombre,Ubicacion,id,Activo,CreatedAt,UpdatedAt")] Deposito deposito)
+        public async Task<IActionResult> Create(DepositoViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(deposito);
+                bool existeDeposito = await _context.Depositos.AnyAsync(d => d.Nombre.ToLower() == model.Nombre.ToLower());
+                if (existeDeposito)
+                {
+                    ModelState.AddModelError("Nombre", "Ya existe un depósito con este nombre.");
+                    return View(model);
+                }
+                var nuevoDeposito = new Deposito
+                {
+                    Nombre = model.Nombre,
+                    Ubicacion = model.Ubicacion,
+                    Activo = model.Activo
+                };
+                _context.Depositos.Add(nuevoDeposito);
                 await _context.SaveChangesAsync();
+                TempData["Ok"] = "¡El depósito se ha creado con éxito!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(deposito);
+            return View(model);
         }
+        #endregion
 
-        // GET: Depositos/Edit/5
+        #region Edit
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var deposito = await _context.Depositos.FindAsync(id);
-            if (deposito == null)
-            {
-                return NotFound();
-            }
-            return View(deposito);
+            if (deposito == null) return NotFound();
+            return View(AViewModel(deposito));
         }
 
-        // POST: Depositos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Nombre,Ubicacion,id,Activo,CreatedAt,UpdatedAt")] Deposito deposito)
+        public async Task<IActionResult> Edit(int? id, DepositoViewModel model)
         {
-            if (id != deposito.id)
-            {
-                return NotFound();
-            }
-
+            if (id != model.id) return NotFound();
             if (ModelState.IsValid)
             {
-                try
+                bool existeDeposito = await _context.Depositos.AnyAsync(d => d.id != model.id && d.Nombre.ToLower() == model.Nombre.ToLower());
+                if (existeDeposito)
                 {
-                    _context.Update(deposito);
-                    await _context.SaveChangesAsync();
+                    ModelState.AddModelError("Nombre", "Ya existe un depósito con este nombre.");
+                    return View(model);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DepositoExists(deposito.id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                var deposito = await _context.Depositos.FindAsync(id);
+                if (deposito == null) return NotFound();
+                deposito.Nombre = model.Nombre;
+                deposito.Ubicacion = model.Ubicacion;
+                deposito.Activo = model.Activo;
+                deposito.UpdatedAt = DateTime.Now;
+                _context.Depositos.Update(deposito);
+                await _context.SaveChangesAsync();
+                TempData["Ok"] = "¡El depósito se ha modificado con éxito!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(deposito);
+            return View(model);
         }
+        #endregion
 
-        // GET: Depositos/Delete/5
+        #region Delete
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var deposito = await _context.Depositos
-                .FirstOrDefaultAsync(m => m.id == id);
-            if (deposito == null)
-            {
-                return NotFound();
-            }
-
-            return View(deposito);
+            if (id == null) return NotFound();
+            var deposito = await _context.Depositos.FindAsync(id);
+            if (deposito == null) return NotFound();
+            return View(AViewModel(deposito));
         }
 
-        // POST: Depositos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var deposito = await _context.Depositos.FindAsync(id);
+            var deposito = await _context.Depositos
+                .Include(d => d.MovimientosOrigen)
+                .Include(d => d.MovimientosDestino)
+                .FirstOrDefaultAsync(d => d.id == id);
             if (deposito != null)
             {
+                if (deposito.MovimientosOrigen.Any() || deposito.MovimientosDestino.Any())
+                {
+                    TempData["Error"] = $"No se puede eliminar el depósito '{deposito.Nombre}' porque tiene movimientos asociados.";
+                    return RedirectToAction(nameof(Index));
+                }
                 _context.Depositos.Remove(deposito);
+                await _context.SaveChangesAsync();
+                TempData["Ok"] = "Depósito eliminado con éxito.";
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        #endregion
 
-        private bool DepositoExists(int id)
+        #region Funciones
+        private static DepositoViewModel AViewModel(Deposito deposito)
         {
-            return _context.Depositos.Any(e => e.id == id);
+            return new DepositoViewModel
+            {
+                id = deposito.id,
+                Nombre = deposito.Nombre,
+                Ubicacion = deposito.Ubicacion,
+                Activo = deposito.Activo,
+                CreatedAt = deposito.CreatedAt,
+                UpdatedAt = deposito.UpdatedAt
+            };
         }
+        #endregion
     }
 }

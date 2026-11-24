@@ -165,6 +165,12 @@ namespace SistemaStock.Controllers
             if (id != model.id) return NotFound();
             if (ModelState.IsValid)
             {
+                bool existeCliente = await _context.Clientes.AnyAsync(c => c.id != model.id && c.Nombre.ToLower() == model.Nombre.ToLower());
+                if (existeCliente)
+                {
+                    ModelState.AddModelError("Nombre", "Ya existe un cliente con este nombre.");
+                    return View(model);
+                }
                 var cliente = await _context.Clientes.FindAsync(id);
                 if (cliente == null) return NotFound();
                 // Mapeo manual de actualización: asignamos los datos modificados del ViewModel a la entidad rastreada
@@ -176,7 +182,7 @@ namespace SistemaStock.Controllers
                 cliente.Email = model.Email;
                 cliente.Telefono = model.Telefono;
                 cliente.Activo = model.Activo;
-                cliente.UpdatedAt = DateTime.UtcNow;
+                cliente.UpdatedAt = DateTime.Now;
                 _context.Clientes.Update(cliente);
                 await _context.SaveChangesAsync();
                 // Guardamos el mensaje en TempData antes de redirigir
@@ -200,7 +206,12 @@ namespace SistemaStock.Controllers
                 Documento = cliente.Documento,
                 Email = cliente.Email,
                 Telefono = cliente.Telefono,
-                Activo = cliente.Activo
+                Activo = cliente.Activo,
+                Contacto = cliente.Contacto,
+                Direccion = cliente.Direccion,
+                Observaciones = cliente.Observaciones,
+                CreatedAt = cliente.CreatedAt,
+                UpdatedAt = cliente.UpdatedAt
             };
             return View(model);
         }
@@ -227,10 +238,6 @@ namespace SistemaStock.Controllers
                 TempData["Ok"] = "Cliente eliminado con éxito.";
             }
             return RedirectToAction(nameof(Index));
-        }
-        private bool ClienteExists(int? id)
-        {
-            return _context.Clientes.Any(e => e.id == id);
         }
 
     }

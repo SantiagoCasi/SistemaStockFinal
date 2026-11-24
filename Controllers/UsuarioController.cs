@@ -60,6 +60,9 @@ namespace SistemaStock.Controllers
         [ValidateAntiForgeryToken] // Buena práctica para prevenir ataques CSRF
         public async Task<IActionResult> Crear(CrearViewModel model)
         {
+            if (!string.IsNullOrWhiteSpace(model.Email) && await _userManager.FindByEmailAsync(model.Email) != null)
+                ModelState.AddModelError("", "Ya existe un usuario con este email.");
+
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser
@@ -157,12 +160,19 @@ namespace SistemaStock.Controllers
                     ViewBag.Roles = await CargarRoles(model.Rol);
                     return View(model);
                 }
+                var otro = await _userManager.FindByEmailAsync(model.Email);
+                if (otro != null && otro.Id != user.Id)
+                {
+                    ModelState.AddModelError("", "Ya existe un usuario con este email.");
+                    ViewBag.Roles = await CargarRoles(model.Rol);
+                    return View(model);
+                }
                 // 3. Actualizar datos básicos del usuario
                 user.Nombre = model.Nombre;
                 user.Email = model.Email;
                 user.UserName = model.Email;
                 user.Activo = model.Activo;
-                user.UpdatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.Now;
 
                 var result = await _userManager.UpdateAsync(user);
                 if (!result.Succeeded)

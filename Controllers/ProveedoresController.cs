@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaStock.Data;
 using SistemaStock.Models.Entities;
+using SistemaStock.Models.ViewModels;
 
 namespace SistemaStock.Controllers
 {
@@ -21,139 +17,151 @@ namespace SistemaStock.Controllers
             _context = context;
         }
 
-        // GET: Proveedores
+        #region Index
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Proveedores.ToListAsync());
+            var proveedores = await _context.Proveedores.ToListAsync();
+            return View(proveedores.Select(AViewModel).ToList());
         }
+        #endregion
 
-        // GET: Proveedores/Details/5
+        #region Details
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var proveedor = await _context.Proveedores
-                .FirstOrDefaultAsync(m => m.id == id);
-            if (proveedor == null)
-            {
-                return NotFound();
-            }
-
-            return View(proveedor);
+            if (id == null) return NotFound();
+            var proveedor = await _context.Proveedores.FirstOrDefaultAsync(p => p.id == id);
+            if (proveedor == null) return NotFound();
+            return View(AViewModel(proveedor));
         }
+        #endregion
 
-        // GET: Proveedores/Create
+        #region Create
         public IActionResult Create()
         {
-            return View();
+            return View(new ProveedorViewModel());
         }
 
-        // POST: Proveedores/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nombre,Contacto,Documento,Telefono,Email,Direccion,Observaciones,id,Activo,CreatedAt,UpdatedAt")] Proveedor proveedor)
+        public async Task<IActionResult> Create(ProveedorViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(proveedor);
+                bool existeProveedor = await _context.Proveedores.AnyAsync(p => p.Nombre.ToLower() == model.Nombre.ToLower());
+                if (existeProveedor)
+                {
+                    ModelState.AddModelError("Nombre", "Ya existe un proveedor con este nombre.");
+                    return View(model);
+                }
+                var nuevoProveedor = new Proveedor
+                {
+                    Nombre = model.Nombre,
+                    Contacto = model.Contacto,
+                    Documento = model.Documento,
+                    Telefono = model.Telefono,
+                    Email = model.Email,
+                    Direccion = model.Direccion,
+                    Observaciones = model.Observaciones,
+                    Activo = model.Activo
+                };
+                _context.Proveedores.Add(nuevoProveedor);
                 await _context.SaveChangesAsync();
+                TempData["Ok"] = "¡El proveedor se ha creado con éxito!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(proveedor);
+            return View(model);
         }
+        #endregion
 
-        // GET: Proveedores/Edit/5
+        #region Edit
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var proveedor = await _context.Proveedores.FindAsync(id);
-            if (proveedor == null)
-            {
-                return NotFound();
-            }
-            return View(proveedor);
+            if (proveedor == null) return NotFound();
+            return View(AViewModel(proveedor));
         }
 
-        // POST: Proveedores/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Nombre,Contacto,Documento,Telefono,Email,Direccion,Observaciones,id,Activo,CreatedAt,UpdatedAt")] Proveedor proveedor)
+        public async Task<IActionResult> Edit(int? id, ProveedorViewModel model)
         {
-            if (id != proveedor.id)
-            {
-                return NotFound();
-            }
-
+            if (id != model.id) return NotFound();
             if (ModelState.IsValid)
             {
-                try
+                bool existeProveedor = await _context.Proveedores.AnyAsync(p => p.id != model.id && p.Nombre.ToLower() == model.Nombre.ToLower());
+                if (existeProveedor)
                 {
-                    _context.Update(proveedor);
-                    await _context.SaveChangesAsync();
+                    ModelState.AddModelError("Nombre", "Ya existe un proveedor con este nombre.");
+                    return View(model);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProveedorExists(proveedor.id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                var proveedor = await _context.Proveedores.FindAsync(id);
+                if (proveedor == null) return NotFound();
+                proveedor.Nombre = model.Nombre;
+                proveedor.Contacto = model.Contacto;
+                proveedor.Documento = model.Documento;
+                proveedor.Telefono = model.Telefono;
+                proveedor.Email = model.Email;
+                proveedor.Direccion = model.Direccion;
+                proveedor.Observaciones = model.Observaciones;
+                proveedor.Activo = model.Activo;
+                proveedor.UpdatedAt = DateTime.Now;
+                _context.Proveedores.Update(proveedor);
+                await _context.SaveChangesAsync();
+                TempData["Ok"] = "¡El proveedor se ha modificado con éxito!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(proveedor);
+            return View(model);
         }
+        #endregion
 
-        // GET: Proveedores/Delete/5
+        #region Delete
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var proveedor = await _context.Proveedores
-                .FirstOrDefaultAsync(m => m.id == id);
-            if (proveedor == null)
-            {
-                return NotFound();
-            }
-
-            return View(proveedor);
+            if (id == null) return NotFound();
+            var proveedor = await _context.Proveedores.FindAsync(id);
+            if (proveedor == null) return NotFound();
+            return View(AViewModel(proveedor));
         }
 
-        // POST: Proveedores/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? id)
         {
-            var proveedor = await _context.Proveedores.FindAsync(id);
+            var proveedor = await _context.Proveedores.Include(p => p.Movimientos).FirstOrDefaultAsync(p => p.id == id);
             if (proveedor != null)
             {
+                if (proveedor.Movimientos.Any())
+                {
+                    TempData["Error"] = $"No se puede eliminar el proveedor '{proveedor.Nombre}' porque tiene movimientos asociados.";
+                    return RedirectToAction(nameof(Index));
+                }
                 _context.Proveedores.Remove(proveedor);
+                await _context.SaveChangesAsync();
+                TempData["Ok"] = "Proveedor eliminado con éxito.";
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        #endregion
 
-        private bool ProveedorExists(int id)
+        #region Funciones
+        private static ProveedorViewModel AViewModel(Proveedor proveedor)
         {
-            return _context.Proveedores.Any(e => e.id == id);
+            return new ProveedorViewModel
+            {
+                id = proveedor.id,
+                Nombre = proveedor.Nombre,
+                Contacto = proveedor.Contacto,
+                Documento = proveedor.Documento,
+                Telefono = proveedor.Telefono,
+                Email = proveedor.Email,
+                Direccion = proveedor.Direccion,
+                Observaciones = proveedor.Observaciones,
+                Activo = proveedor.Activo,
+                CreatedAt = proveedor.CreatedAt,
+                UpdatedAt = proveedor.UpdatedAt
+            };
         }
+        #endregion
     }
 }

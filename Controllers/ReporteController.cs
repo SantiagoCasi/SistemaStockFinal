@@ -170,7 +170,7 @@ namespace SistemaStock.Controllers
             .AsQueryable();
 
             if (desde.HasValue) query = query.Where(m => m.Fecha >= desde.Value);
-            if (hasta.HasValue) query = query.Where(m => m.Fecha <= hasta.Value.AddDays(1));
+            if (hasta.HasValue) query = query.Where(m => m.Fecha < hasta.Value.Date.AddDays(1));
             if (tipo.HasValue) query = query.Where(m => m.Tipo == tipo.Value);
 
             return await query.OrderByDescending(m => m.Fecha).ToListAsync();
