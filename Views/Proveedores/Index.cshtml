@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SistemaStock.Models.Entities.Proveedor>
+﻿@model IEnumerable<SistemaStock.Models.ViewModels.ProveedorViewModel>
 
 @{
     ViewData["Title"] = "Proveedores";
@@ -112,10 +112,12 @@
                            class="btn btn-sm btn-outline-warning" title="Editar">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <a asp-action="Delete" asp-route-id="@item.id"
-                           class="btn btn-sm btn-outline-danger" title="Eliminar">
-                            <i class="bi bi-trash"></i>
-                        </a>
+                        <form asp-action="Delete" asp-route-id="@item.id" method="post" class="form-eliminar d-inline"
+                              data-nombre="@item.Nombre">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
             }
