@@ -7,7 +7,7 @@ namespace SistemaStock.Models.ViewModels.Usuario
         public string Id { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Requerido"), StringLength(100, MinimumLength = 8)]
+        [Required(ErrorMessage = "Requerido"), StringLength(100, MinimumLength = 6, ErrorMessage = "La contraseña debe tener entre {2} y {1} caracteres.")]
         [DataType(DataType.Password)]
         [Display(Name = "Nueva contraseña")]
         public string NuevaPassword { get; set; } = string.Empty;

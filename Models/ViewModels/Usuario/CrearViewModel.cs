@@ -5,7 +5,7 @@ namespace SistemaStock.Models.ViewModels.Usuario
     public class CrearViewModel
     {
 
-        [Required(ErrorMessage = "El Email es obligatorio."), EmailAddress]
+        [Required(ErrorMessage = "El Email es obligatorio."), EmailAddress(ErrorMessage = "El email no es válido.")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "El nombre es obligatorio.")]

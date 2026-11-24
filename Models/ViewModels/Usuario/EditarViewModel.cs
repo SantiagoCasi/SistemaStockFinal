@@ -6,11 +6,11 @@ namespace SistemaStock.Models.ViewModels.Usuario
     {
         public string Id { get; set; } = string.Empty;
 
-        [Required, StringLength(100)]
+        [Required(ErrorMessage = "El nombre es obligatorio."), StringLength(100, ErrorMessage = "Máximo 100 caracteres")]
         [Display(Name = "Nombre")]
         public string Nombre{ get; set; } = string.Empty;
 
-        [Required, EmailAddress]
+        [Required(ErrorMessage = "El email es obligatorio."), EmailAddress(ErrorMessage = "El email no es válido.")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Seleccione un rol")]
