@@ -8,7 +8,7 @@ namespace SistemaStock.Models.ViewModels.Cuenta
         [Display(Name = "Contraseña actual")]
         public string PasswordActual { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Requerido"), StringLength(100, MinimumLength = 8)]
+        [Required(ErrorMessage = "Requerido"), StringLength(100, MinimumLength = 8, ErrorMessage = "La contraseña debe tener entre {2} y {1} caracteres.")]
         [DataType(DataType.Password)]
         [Display(Name = "Nueva contraseña")]
         public string NuevaPassword { get; set; } = string.Empty;
