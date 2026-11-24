@@ -9,7 +9,7 @@ namespace SistemaStock.Models.Entities
 
         public bool Activo { get; set; } = true;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public DateTime? UpdatedAt { get; set; }
     }
